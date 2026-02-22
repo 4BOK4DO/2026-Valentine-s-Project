@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>喵喵和狗狗的情人節</title>
+    <style>
+        /* =========================================
+           GLOBAL & BASE STYLES
+           ========================================= */
+        body, html {
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100%;
+            overflow: hidden; 
+            background-color: #020111;
+            font-family: 'Trebuchet MS', Arial, sans-serif;
+        }
+
+        canvas { 
+            display: block; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            z-index: 1; 
+        }
+
+        .fullscreen-view {
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* --- Transition Overlay --- */
+        #whiteout {
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background-color: #020111; 
+            opacity: 0; 
+            pointer-events: none; 
+            transition: opacity 2s ease-in;
+            z-index: 9999;
+        }
+
+        /* =========================================
+           VIEW 1: INTRO (Skyline & Question)
+           ========================================= */
+        #decor-img-1 {
+            position: absolute; 
+            top: 25%; 
+            left: 25%; 
+            width: 300px;
+            transform: rotate(-15deg); 
+            z-index: 5; 
+            pointer-events: none;
+        }
+
+        #decor-img-2 {
+            position: absolute; 
+            top: 20%; 
+            right: 15%; 
+            width: 400px;
+            transform: rotate(10deg); 
+            z-index: 5; 
+            pointer-events: none;
+        }
+
+        #ui-layer {
+            position: absolute; 
+            top: 30%; 
+            left: 50%;
+            transform: translate(-50%, -50%); 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            gap: 40px; 
+            z-index: 10;
+            transition: opacity 1s ease-out; 
+        }
+
+        .neon-text {
+            font-size: 3.5rem; 
+            font-weight: bold; 
+            text-align: center; 
+            color: #ffe6f2; 
+            -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.9); 
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8), 
+                         -1px -1px 2px rgba(255, 20, 147, 0.5), 
+                         0 0 10px rgba(255, 255, 255, 0.8), 
+                         0 0 20px #ff1493, 
+                         0 0 40px #ff1493, 
+                         0 0 80px #ff1493;
+            animation: flicker 6s infinite;
+        }
+
+        @keyframes flicker {
+            0%, 18%, 22%, 25%, 53%, 57%, 100% { 
+                opacity: 1; 
+                text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8), 
+                             -1px -1px 2px rgba(255, 20, 147, 0.5), 
+                             0 0 10px rgba(255, 255, 255, 0.8), 
+                             0 0 20px #ff1493, 
+                             0 0 40px #ff1493, 
+                             0 0 80px #ff1493; 
+            }
+            20%, 24%, 55% { 
+                opacity: 0.7; 
+                text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5), 
+                             0 0 5px #ff1493, 
+                             0 0 10px #ff1493; 
+            }
+        }
+
+        .button-group { 
+            display: flex; 
+            gap: 20px; 
+            justify-content: center; 
+            align-items: center;
+            width: 100%;
+        }
+
+        .styled-btn {
+            background-color: rgba(20, 20, 30, 0.8); 
+            color: #fff; 
+            border: 2px solid #fff;
+            padding: 15px 30px; 
+            font-size: 1.2rem; 
+            font-family: 'Courier New', Courier, monospace;
+            cursor: pointer; 
+            text-transform: uppercase; 
+            box-shadow: 4px 4px 0px rgba(255, 255, 255, 0.5);
+            transition: transform 0.1s, box-shadow 0.1s, background-color 0.2s; 
+            backdrop-filter: blur(2px);
+        }
+
+        .styled-btn:hover { 
+            background-color: rgba(60, 60, 80, 0.9); 
+            box-shadow: 4px 4px 0px rgba(255, 20, 147, 0.8); 
+            border-color: #ff1493; 
+        }
+
+        .styled-btn:active { 
+            transform: translate(2px, 2px); 
+            box-shadow: 2px 2px 0px rgba(255, 255, 255, 0.5); 
+        }
+
+        /* =========================================
+           VIEW 2: MAIN EVENT (I luv U too)
+           ========================================= */
+        @keyframes fadeInPage { 
+            to { opacity: 1; } 
+        }
+
+        .moon {
+            position: absolute; 
+            top: 15%; 
+            right: 15%; 
+            width: 150px; 
+            z-index: 2;
+            animation: rgb-moon 4s linear infinite;
+        }
+
+        @keyframes rgb-moon {
+            0% { 
+                filter: drop-shadow(0 0 20px rgba(255,0,0,0.8)) sepia(1) saturate(5) hue-rotate(0deg) opacity(0.85); 
+            }
+            100% { 
+                filter: drop-shadow(0 0 20px rgba(255,0,0,0.8)) sepia(1) saturate(5) hue-rotate(360deg) opacity(0.85); 
+            }
+        }
+
+        #main-title {
+            color: #ffe6f2; 
+            font-size: 4rem; 
+            z-index: 10; 
+            text-align: center; 
+            width: 100%;
+            text-shadow: 0 0 20px #ff1493, 0 0 40px #ff1493; 
+            position: absolute; 
+            top: 20%; 
+            margin: 0;
+        }
+
+        /* --- Cow & Riders --- */
+        #cow-mover { 
+            position: absolute; 
+            left: 0px; 
+            top: 0px; 
+            width: 125px; 
+            z-index: 20; 
+            will-change: transform; 
+        }
+
+        #cow-bobber { 
+            width: 100%; 
+            height: 100%; 
+            position: relative; 
+        }
+
+        .is-bobbing { 
+            animation: bob 3s ease-in-out infinite; 
+        }
+
+        @keyframes bob { 
+            0%, 100% { transform: translateY(0); } 
+            50% { transform: translateY(-5%); } 
+        }
+
+        #cow-img { 
+            width: 100%; 
+            display: block; 
+            position: relative; 
+            z-index: 20; 
+        }
+
+        .rider { 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            z-index: 10; 
+            opacity: 0; 
+        }
+
+        #cat { width: 55px; } 
+        #dog { width: 65px; }
+
+        @keyframes popCat { 
+            0% { transform: translate(-50%, -50%) rotate(0deg); opacity: 0; } 
+            100% { transform: translate(-55%, -130%) rotate(-15deg); opacity: 1; } 
+        }
+
+        @keyframes popDog { 
+            0% { transform: translate(-50%, -50%) rotate(0deg); opacity: 0; } 
+            100% { transform: translate(-55%, -100%) rotate(3deg); opacity: 1; } 
+        }
+
+        /* --- Image Slideshow --- */
+        #image-container {
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%) scale(0.98); 
+            z-index: 30; 
+            opacity: 0; 
+            pointer-events: none; 
+            transition: opacity 2s ease-in, transform 2s ease-out;
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+        }
+
+        #memory-img {
+            max-width: 75vw; 
+            max-height: 65vh; 
+            object-fit: contain; 
+            cursor: pointer; 
+            border-radius: 8px; 
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.1), 0 0 20px rgba(255, 20, 147, 0.3);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        #memory-img:hover { 
+            transform: scale(1.02); 
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.3), 0 0 30px rgba(255, 20, 147, 0.6); 
+        }
+
+        #click-hint {
+            position: absolute; 
+            bottom: 10%; 
+            left: 50%; 
+            transform: translateX(-50%);
+            color: rgba(255, 230, 242, 0.7); 
+            font-size: 1.2rem; 
+            text-shadow: 0 0 10px #ff1493; 
+            z-index: 40;
+            opacity: 0; 
+            pointer-events: none; 
+            transition: opacity 1.5s ease-in; 
+            letter-spacing: 2px;
+        }
+
+        #final-message {
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%);
+            color: #ffe6f2; 
+            font-size: 4rem; 
+            z-index: 50; 
+            text-align: center;
+            text-shadow: 0 0 20px #ff1493, 0 0 40px #ff1493, 0 0 60px #fff;
+            opacity: 0; 
+            pointer-events: none; 
+            transition: opacity 3s ease-in; 
+            margin: 0; 
+            width: 100%;
+        }
+
+        #universe-message {
+            position: absolute; 
+            top: 25%; 
+            left: 50%; 
+            transform: translate(-50%, -50%);
+            color: #ffe6f2; 
+            font-size: 3rem; 
+            z-index: 60; 
+            text-align: center;
+            text-shadow: 0 0 20px #ff1493, 0 0 40px #ff1493;
+            opacity: 0; 
+            pointer-events: none; 
+            transition: opacity 3.5s ease-in; 
+            width: 90%;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* --- Constellation & Planets --- */
+        #constellation-layer { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            z-index: 35; 
+            pointer-events: none; 
+        }
+
+        .constellation-star {
+            position: absolute; 
+            width: 5px; 
+            height: 5px; 
+            background: #fff; 
+            border-radius: 50%;
+            box-shadow: 0 0 10px 2px #fff, 0 0 20px 5px #ff1493; 
+            opacity: 0;
+            transition: left 2.5s cubic-bezier(0.25, 1, 0.5, 1), 
+                        top 2.5s cubic-bezier(0.25, 1, 0.5, 1), 
+                        opacity 1.5s ease-out, 
+                        transform 1.5s ease-out;
+        }
+
+        .golden-star { 
+            position: absolute; 
+            width: 100px; 
+            height: 100px; 
+            z-index: 45; 
+            pointer-events: none; 
+        }
+
+        .planet { 
+            position: absolute; 
+            z-index: 5; 
+            opacity: 0; 
+            animation: popPlanet 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+            --target-opacity: 0.8; 
+        }
+
+        @keyframes popPlanet { 
+            0% { opacity: 0; transform: scale(0.3); } 
+            70% { opacity: var(--target-opacity); transform: scale(1.05); } 
+            100% { opacity: var(--target-opacity); transform: scale(1); } 
+        }
+
+        /* --- UI & Music --- */
+        #timer-container {
+            position: absolute; 
+            bottom: 15%; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            text-align: center; 
+            z-index: 100;
+            color: #ffe6f2; 
+            text-shadow: 0 0 10px #ff1493, 0 0 20px #ff1493; 
+            animation: fadeInTimer 2s ease-in; 
+            display: none;
+        }
+
+        #timer-title { 
+            font-size: 1.5rem; 
+            margin-bottom: 10px; 
+            letter-spacing: 2px; 
+        }
+
+        #timer-clock { 
+            font-size: 3rem; 
+            font-weight: bold; 
+            font-family: 'Courier New', Courier, monospace; 
+        }
+
+        @keyframes fadeInTimer { 
+            from { opacity: 0; transform: translate(-50%, 20px); } 
+            to { opacity: 1; transform: translate(-50%, 0); } 
+        }
+
+        #custom-tooltip {
+            position: fixed; 
+            pointer-events: none; 
+            background: rgba(10, 10, 20, 0.85); 
+            border: 1px solid #ff1493;
+            color: #ffe6f2; 
+            padding: 8px 16px; 
+            border-radius: 8px; 
+            font-size: 1.2rem; 
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(255, 20, 147, 0.6); 
+            text-shadow: 0 0 8px #ff1493; 
+            z-index: 9999; 
+            opacity: 0;
+            transition: opacity 0.2s ease-out; 
+            transform: translate(-50%, -150%); 
+        }
+
+        #music-player-container {
+            position: absolute; 
+            top: 30px; 
+            right: 0; 
+            z-index: 1000; 
+            background: rgba(10, 10, 20, 0.6);
+            border: 1px solid #ff1493; 
+            border-right: none; 
+            box-shadow: 0 0 15px rgba(255, 20, 147, 0.4);
+            border-radius: 12px 0 0 12px; 
+            display: none; 
+            flex-direction: row; 
+            align-items: center; 
+            backdrop-filter: blur(8px);
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.5s; 
+            transform: translateX(0); 
+        }
+
+        #music-player-container.collapsed { 
+            transform: translateX(calc(100% - 50px)); 
+            background: rgba(10, 10, 20, 0.9); 
+            cursor: pointer; 
+        }
+
+        #music-tab { 
+            padding: 10px 15px; 
+            font-size: 1.5rem; 
+            cursor: pointer; 
+            user-select: none; 
+            animation: pulse-music 2s infinite; 
+        }
+
+        @keyframes pulse-music { 
+            0%, 100% { opacity: 0.7; transform: scale(0.95); } 
+            50% { opacity: 1; transform: scale(1.1); } 
+        }
+
+        #music-content { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px; 
+            padding: 12px 20px 12px 0; 
+        }
+
+        #music-note { 
+            color: #ffe6f2; 
+            font-size: 0.9rem; 
+            font-family: 'Courier New', Courier, monospace; 
+            text-shadow: 0 0 8px #ff1493; 
+            margin: 0; 
+            white-space: nowrap; 
+        }
+
+        audio { 
+            height: 35px; 
+            width: 250px; 
+            outline: none; 
+        }
+
+        audio::-webkit-media-controls-panel { 
+            background-color: rgba(255, 230, 242, 0.9); 
+        }
+
+        #flower-prompt-container { 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            z-index: 40; 
+            text-align: center; 
+            display: none; 
+            transition: opacity 1s ease-out; 
+        }
+
+        #flower-text { 
+            color: #ffe6f2; 
+            font-size: 2.5rem; 
+            margin-bottom: 20px; 
+            text-shadow: 0 0 15px #ff1493; 
+            transition: all 0.3s ease; 
+        }
+
+        #btn-clear { 
+            position: absolute; 
+            bottom: 30px; 
+            right: 30px; 
+            z-index: 60; 
+            border-color: #aaa; 
+            color: #ccc; 
+            transition: opacity 1s ease-out; 
+            display: none; 
+        }
+
+        #btn-clear:hover { 
+            background-color: rgba(80, 20, 20, 0.9); 
+            box-shadow: 4px 4px 0px rgba(255, 50, 50, 0.8); 
+            border-color: #ff3333; 
+            color: white; 
+        }
+
+        #btn-lets-go { 
+            background-color: #ff1493; 
+            border-color: #ff69b4; 
+            display: none; 
+            box-shadow: 4px 4px 0px rgba(255, 255, 255, 0.8); 
+            animation: pulse 1.5s infinite; 
+            padding: 8px 20px; 
+            font-size: 1rem; 
+        }
+
+        #btn-lets-go:hover { 
+            background-color: #ff69b4; 
+            border-color: #fff; 
+        }
+
+        @keyframes pulse { 
+            0% { transform: scale(1); } 
+            50% { transform: scale(1.05); } 
+            100% { transform: scale(1); } 
+        }
+
+        #progress-wrapper { 
+            position: absolute; 
+            top: 30px; 
+            left: 30px; 
+            z-index: 50; 
+            display: none; 
+            align-items: center; 
+            gap: 15px; 
+            transition: opacity 1s ease-out; 
+        }
+
+        #progress-container { 
+            width: 250px; 
+            height: 25px; 
+            border: 3px solid #fff; 
+            box-shadow: 0 0 10px #ff1493; 
+            background-color: rgba(0,0,0,0.5); 
+        }
+
+        #progress-fill { 
+            width: 0%; 
+            height: 100%; 
+            background-color: #ff1493; 
+            transition: width 0.2s ease-out; 
+            box-shadow: 0 0 15px #ff1493; 
+        }
+
+        #progress-text { 
+            color: #ffe6f2; 
+            font-size: 1.2rem; 
+            font-family: 'Courier New', Courier, monospace; 
+            text-shadow: 0 0 10px #ff1493; 
+            font-weight: bold; 
+            display: none; 
+            animation: fadeInText 0.5s ease-in; 
+        }
+
+        @keyframes fadeInText { 
+            from { opacity: 0; transform: translateX(-10px); } 
+            to { opacity: 1; transform: translateX(0); } 
+        }
+        
+        #flower-canvas-layer { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            pointer-events: none; 
+            z-index: 30; 
+            overflow: hidden; 
+        }
+
+        .thrown-flower { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            will-change: transform; 
+        }
+
+        /* =========================================
+           VIEW 3: 404 ERROR PAGE
+           ========================================= */
+        #view-404 {
+            background-color: #fff; 
+            color: #222; 
+            font-family: Arial, sans-serif;
+            display: none; 
+            justify-content: center; 
+            align-items: flex-start; 
+            padding-top: 80px; 
+            box-sizing: border-box;
+        }
+
+        #view-404 .container {
+            display: flex; 
+            flex-direction: row; 
+            max-width: 750px; 
+            width: 100%; 
+            align-items: flex-start; 
+            justify-content: space-between;
+        }
+
+        #view-404 .text-content { 
+            flex: 1; 
+            padding-right: 40px; 
+        }
+
+        #view-404 .logo { 
+            margin-bottom: 20px; 
+            width: 120px; 
+        }
+
+        #view-404 .error-code { 
+            font-size: 16px; 
+            margin-bottom: 15px; 
+        }
+
+        #view-404 .error-code b { 
+            font-size: 16px; 
+        }
+
+        #view-404 .error-desc { 
+            color: #777; 
+        }
+
+        #view-404 .message { 
+            font-size: 16px; 
+            line-height: 1.5; 
+            margin-bottom: 20px; 
+        }
+
+        #view-404 .robot-img { 
+            max-width: 250px; 
+            width: 100%; 
+            margin-top: -20px; 
+        }
+
+        #view-404 .back-link {
+            display: inline-block; 
+            margin-top: 20px; 
+            color: #1a0dab; 
+            text-decoration: none; 
+            font-size: 14px;
+        }
+
+        #view-404 .back-link:hover { 
+            text-decoration: underline; 
+        }
+
+        @media (max-width: 600px) {
+            #view-404 .container { 
+                flex-direction: column; 
+                padding: 20px; 
+            }
+            #view-404 .text-content { 
+                padding-right: 0; 
+            }
+            #view-404 .robot-img { 
+                margin-top: 40px; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="whiteout"></div>
+
+    <div id="view-intro" class="fullscreen-view">
+        <img id="decor-img-1" src="asset/c.png" alt="Decoration 1">
+        <img id="decor-img-2" src="asset/d.png" alt="Decoration 2">
+        
+        <div id="ui-layer">
+            <div class="neon-text">Will you be my Valentine?</div>
+            <div class="button-group">
+                <button id="btn-yes" class="styled-btn">Yes</button>
+                <button id="btn-no" class="styled-btn">No</button>
+            </div>
+        </div>
+
+        <canvas id="introCanvas"></canvas>
+    </div>
+
+    <div id="view-main" class="fullscreen-view" style="display: none; opacity: 0;">
+        <img class="moon" src="asset/moon.png" alt="Moon">
+        
+        <div id="cow-mover">
+            <div id="cow-bobber">
+                <img class="rider" id="cat" src="asset/c.png" alt="Cat Rider">
+                <img class="rider" id="dog" src="asset/d.png" alt="Dog Rider">
+                <img id="cow-img" src="asset/cow.png" alt="Cow">
+            </div>
+        </div>
+        
+        <h1 id="main-title">I luv U too</h1>
+        
+        <canvas id="mainStarCanvas"></canvas>
+
+        <div id="progress-wrapper">
+            <div id="progress-container"><div id="progress-fill"></div></div>
+            <div id="progress-text">Object Completed</div>
+            <button id="btn-lets-go" class="styled-btn">Let's Go</button>
+        </div>
+
+        <div id="flower-prompt-container">
+            <div id="flower-text">Do you like some flowers?</div>
+            <div class="button-group">
+                <button id="btn-flower-yes" class="styled-btn">Yes</button>
+                <button id="btn-flower-no" class="styled-btn">No</button>
+            </div>
+        </div>
+        
+        <button id="btn-clear" class="styled-btn">Clear</button>
+
+        <div id="flower-canvas-layer"></div>
+        <div id="constellation-layer"></div>
+        <div id="planet-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none;"></div>
+
+        <div id="image-container">
+            <img id="memory-img" src="" alt="A special memory">
+        </div>
+        
+        <div id="click-hint">Click photo to continue...</div>
+        <h1 id="final-message">Happy Valentine's Day!</h1>
+
+        <img id="milky-way" src="asset/milky_way.png" alt="Milky Way" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 3s ease-in; z-index: 2; pointer-events: none;">
+
+        <h2 id="universe-message">I want to create the universe belongs only to you &amp; me</h2>
+
+        <div id="timer-container">
+            <div id="timer-title">Time since we started</div>
+            <div id="timer-clock">000 Days 00:00:00</div>
+        </div>
+
+        <div id="music-player-container">
+            <div id="music-tab">🎵</div>
+            <div id="music-content">
+                <div id="music-note">失重前幸福</div>
+                <audio id="bg-music" controls loop>
+                    <source src="asset/your_song.mp3" type="audio/mpeg">
+                </audio>
+            </div>
+        </div>
+
+        <div id="custom-tooltip"></div>
+    </div>
+
+    <div id="view-404" class="fullscreen-view">
+        <div class="container">
+            <div class="text-content">
+                <img class="logo" src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google">
+                <p class="error-code"><b>404.</b> <span class="error-desc">That's an error.</span></p>
+                <p class="message">
+                    The requested URL <i>/I_dont_want_to_be_your_valentine</i> was not found on this server, and it will never be found.
+                    Remind you that your doggy doggy realy realy loves you.<br><br>
+                    <span class="error-desc">That's all we know.</span>
+                </p>
+                <a href="#" class="back-link" id="btn-return-home">Return to Home Page</a>
+            </div>
+            <div>
+                <img class="robot-img" src="https://www.google.com/images/errors/robot.png" alt="Broken Robot">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // GLOBAL VARIABLES & RESIZE LOGIC
+        // ==========================================
+        let screenWidth = window.innerWidth;
+        let screenHeight = window.innerHeight;
+
+        // Intro Canvas Setup
+        const canvasIntro = document.getElementById('introCanvas');
+        const ctxIntro = canvasIntro.getContext('2d');
+        let introStars = [];
+        let introSnowflakes = [];
+        
+        // Main Canvas Setup
+        const canvasMain = document.getElementById('mainStarCanvas');
+        const ctxMain = canvasMain.getContext('2d');
+        let mainStars = [];
+
+        function resizeCanvases() {
+            screenWidth = window.innerWidth;
+            screenHeight = window.innerHeight;
+            
+            canvasIntro.width = screenWidth;
+            canvasIntro.height = screenHeight;
+            canvasMain.width = screenWidth;
+            canvasMain.height = screenHeight;
+            
+            initIntroStars();
+            initMainStars();
+        }
+        window.addEventListener('resize', resizeCanvases);
+
+        // ==========================================
+        // VIEW 1 LOGIC (INTRO)
+        // ==========================================
+        let isLookingUp = false;
+        let cameraY = 0;
+        let isIntroActive = true;
+
+        const scaleFactor = 1.0; 
+        const visibleFraction = 0.75; 
+        const skylineImage = new Image();
+        skylineImage.src = 'asset/vancouver_skyline.png';
+        let imgNativeWidth = 0;
+        let imgNativeHeight = 0;
+
+        skylineImage.onload = () => {
+            imgNativeWidth = skylineImage.width;
+            imgNativeHeight = skylineImage.height;
+        };
+
+        function initIntroStars() {
+            introStars = [];
+            const numStars = Math.floor((screenWidth * screenHeight * 2) / 8000); 
+            for (let i = 0; i < numStars; i++) {
+                introStars.push({
+                    x: Math.random() * screenWidth, 
+                    y: (Math.random() * screenHeight * 2) - screenHeight, 
+                    opacity: Math.random(), 
+                    size: Math.random() * 1.5, 
+                    fadeSpeed: (Math.random() * 0.02) + 0.005 
+                });
+            }
+        }
+
+        class Snowflake {
+            constructor() {
+                this.x = Math.random() * window.innerWidth; 
+                this.y = Math.random() * window.innerHeight;
+                this.radius = Math.random() * 2 + 1; 
+                this.speed = Math.random() * 1 + 0.5; 
+                this.wind = (Math.random() - 0.5) * 0.5;
+            }
+            update() {
+                if (isLookingUp) {
+                    this.y += this.speed + 8; 
+                } else {
+                    this.y += this.speed;
+                }
+                
+                this.x += this.wind;
+                
+                if (!isLookingUp && this.y > screenHeight) { 
+                    this.y = -10; 
+                    this.x = Math.random() * screenWidth; 
+                }
+                if (this.x > screenWidth) this.x = 0;
+                if (this.x < 0) this.x = screenWidth;
+            }
+            draw() {
+                ctxIntro.beginPath(); 
+                ctxIntro.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctxIntro.fillStyle = 'rgba(255, 255, 255, 0.8)'; 
+                ctxIntro.fill();
+            }
+        }
+
+        for(let i = 0; i < 150; i++) {
+            introSnowflakes.push(new Snowflake());
+        }
+
+        function animateIntro() {
+            if (!isIntroActive) return; // Stop drawing to save CPU when hidden
+
+            let bgGradient = ctxIntro.createLinearGradient(0, 0, 0, screenHeight);
+            bgGradient.addColorStop(0, '#020111'); 
+            bgGradient.addColorStop(1, '#1a2b4c'); 
+            ctxIntro.fillStyle = bgGradient; 
+            ctxIntro.fillRect(0, 0, screenWidth, screenHeight);
+
+            if (isLookingUp) cameraY += 8; 
+
+            if (imgNativeWidth > 0) {
+                const aspectRatio = imgNativeWidth / imgNativeHeight;
+                let scaledWidth = screenWidth * scaleFactor;
+                let scaledHeight = scaledWidth / aspectRatio;
+                let imgX = (screenWidth - scaledWidth) / 2;
+                let imgY = screenHeight - (scaledHeight * visibleFraction) + cameraY; 
+
+                ctxIntro.save();
+                ctxIntro.drawImage(skylineImage, imgX, imgY, scaledWidth, scaledHeight);
+                ctxIntro.globalCompositeOperation = 'destination-in';
+                
+                let maskGradient = ctxIntro.createLinearGradient(0, imgY, 0, imgY + scaledHeight);
+                maskGradient.addColorStop(0, 'rgba(0, 0, 0, 0)'); 
+                maskGradient.addColorStop(0.3, 'rgba(0, 0, 0, 1)'); 
+                maskGradient.addColorStop(1, 'rgba(0, 0, 0, 1)');   
+                
+                ctxIntro.fillStyle = maskGradient; 
+                ctxIntro.fillRect(imgX, imgY, scaledWidth, scaledHeight);
+                ctxIntro.restore();
+
+                introStars.forEach(star => {
+                    star.opacity += star.fadeSpeed;
+                    if (star.opacity > 1 || star.opacity < 0.1) star.fadeSpeed *= -1;
+                    if (star.y + cameraY < imgY) { 
+                        ctxIntro.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+                        ctxIntro.beginPath(); 
+                        ctxIntro.arc(star.x, star.y + cameraY, star.size, 0, Math.PI * 2); 
+                        ctxIntro.fill();
+                    }
+                });
+            }
+
+            introSnowflakes.forEach(snow => { 
+                snow.update(); 
+                snow.draw(); 
+            });
+            requestAnimationFrame(animateIntro);
+        }
+
+        // ==========================================
+        // PAGE TRANSITION LOGIC (SPA Routing)
+        // ==========================================
+        const viewIntro = document.getElementById('view-intro');
+        const viewMain = document.getElementById('view-main');
+        const view404 = document.getElementById('view-404');
+        const whiteout = document.getElementById('whiteout');
+        const uiLayer = document.getElementById('ui-layer');
+
+        document.getElementById('btn-yes').addEventListener('click', () => {
+            isLookingUp = true; 
+            uiLayer.style.opacity = 0; 
+            
+            // Fade to white
+            setTimeout(() => { 
+                whiteout.style.opacity = 1; 
+            }, 1500); 
+
+            // Swap views while entirely white
+            setTimeout(() => { 
+                isIntroActive = false; // Turn off intro render loop
+                viewIntro.style.display = 'none';
+                viewMain.style.display = 'block';
+                
+                // Fade whiteout away to reveal Page 2 smoothly
+                whiteout.style.transition = "opacity 2.5s ease-out"; 
+                whiteout.style.opacity = 0;
+                viewMain.style.animation = "fadeInPage 2.5s ease-in forwards";
+                
+                // Initialize View 2 Logic
+                initViewMainLogic();
+            }, 3500);
+        });
+
+        document.getElementById('btn-no').addEventListener('click', () => {
+            isIntroActive = false;
+            viewIntro.style.display = 'none';
+            view404.style.display = 'flex';
+        });
+
+        document.getElementById('btn-return-home').addEventListener('click', (e) => {
+            e.preventDefault();
+            view404.style.display = 'none';
+            viewIntro.style.display = 'block';
+            
+            // Reset intro state
+            isLookingUp = false;
+            cameraY = 0;
+            uiLayer.style.opacity = 1;
+            isIntroActive = true;
+            animateIntro();
+        });
+
+        // Initialize App
+        resizeCanvases();
+        animateIntro();
+
+        // ==========================================
+        // VIEW 2 LOGIC (MAIN EVENT)
+        // ==========================================
+        let baseStarSpeed = 0; 
+        let cowX = 100;
+        let cowY = 100; 
+        let speedX = 0.5; 
+        let speedY = 0.5; 
+        let cowRotation = 0; 
+        let rotSpeed = 0.5; 
+        let isCowBouncing = true; 
+        
+        function initMainStars() {
+            mainStars = [];
+            for (let i = 0; i < 200; i++) {
+                mainStars.push({ 
+                    x: Math.random() * screenWidth, 
+                    y: Math.random() * screenHeight, 
+                    size: Math.random() * 1.5, 
+                    opacity: Math.random(), 
+                    fadeSpeed: (Math.random() * 0.02) + 0.005 
+                });
+            }
+        }
+
+        function animateMainStars() {
+            ctxMain.fillStyle = '#020111'; 
+            ctxMain.fillRect(0, 0, screenWidth, screenHeight);
+
+            mainStars.forEach(star => {
+                star.opacity += star.fadeSpeed;
+                if (star.opacity > 1 || star.opacity < 0.1) star.fadeSpeed *= -1;
+                star.y += baseStarSpeed;
+                
+                if (star.y - baseStarSpeed > screenHeight) { 
+                    star.y = 0; 
+                    star.x = Math.random() * screenWidth; 
+                }
+                
+                if (baseStarSpeed > 2) {
+                    ctxMain.strokeStyle = `rgba(255, 255, 255, ${Math.min(star.opacity, 0.6)})`;
+                    ctxMain.lineWidth = star.size; 
+                    ctxMain.beginPath(); 
+                    ctxMain.moveTo(star.x, star.y); 
+                    ctxMain.lineTo(star.x, star.y - baseStarSpeed); 
+                    ctxMain.stroke();
+                } else {
+                    ctxMain.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+                    ctxMain.beginPath(); 
+                    ctxMain.arc(star.x, star.y, star.size, 0, Math.PI * 2); 
+                    ctxMain.fill();
+                }
+            });
+            requestAnimationFrame(animateMainStars);
+        }
+
+        // Cow Physics
+        const cowMover = document.getElementById('cow-mover');
+        
+        function bounceCow() {
+            if (!isCowBouncing) return; 
+            
+            cowX += speedX; 
+            cowY += speedY; 
+            cowRotation += rotSpeed; 
+            let hitEdge = false;
+            
+            if (cowX <= 0 || cowX + cowMover.clientWidth >= screenWidth) { 
+                speedX *= -1; 
+                hitEdge = true; 
+            }
+            if (cowY <= 0 || cowY + cowMover.clientHeight >= screenHeight) { 
+                speedY *= -1; 
+                hitEdge = true; 
+            }
+
+            if (hitEdge) {
+                rotSpeed = (Math.random() * 3) - 1.5; 
+                cowMover.style.transform = `translate(${cowX}px, ${cowY}px) scale(1.3) rotate(${cowRotation}deg)`;
+                setTimeout(() => { 
+                    if (isCowBouncing) cowMover.style.transform = `translate(${cowX}px, ${cowY}px) scale(1) rotate(${cowRotation}deg)`; 
+                }, 150);
+            } else {
+                cowMover.style.transform = `translate(${cowX}px, ${cowY}px) scale(1) rotate(${cowRotation}deg)`;
+            }
+            requestAnimationFrame(bounceCow);
+        }
+
+        // Central logic initializer called when routing hits View 2
+        function initViewMainLogic() {
+            animateMainStars();
+            bounceCow();
+
+            // Setup Flowers UI
+            const promptContainer = document.getElementById('flower-prompt-container');
+            const flowerText = document.getElementById('flower-text');
+            const btnYes = document.getElementById('btn-flower-yes');
+            const btnNo = document.getElementById('btn-flower-no');
+            const btnClear = document.getElementById('btn-clear');
+            const btnLetsGo = document.getElementById('btn-lets-go');
+            const progressWrapper = document.getElementById('progress-wrapper');
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
+            const flowerCanvasLayer = document.getElementById('flower-canvas-layer');
+
+            let clickCount = 0; 
+            const maxClicks = 25; 
+            let activeFlowers = []; 
+            let isSuctionActive = false;
+            const flowerImages = ['flower1.png', 'flower2.png', 'flower3.png', 'flower4.png', 'flower5.png'];
+            
+            setTimeout(() => { 
+                promptContainer.style.display = 'block'; 
+            }, 5000);
+
+            function throwFlower() {
+                const flower = document.createElement('img');
+                flower.src = 'asset/' + flowerImages[Math.floor(Math.random() * flowerImages.length)]; 
+                flower.classList.add('thrown-flower');
+                
+                const randomSize = Math.random() * 50 + 60; 
+                flower.style.width = randomSize + 'px'; 
+                flower.style.height = randomSize + 'px';
+                flowerCanvasLayer.appendChild(flower);
+
+                const throwFromLeft = Math.random() > 0.5; 
+                const startX = throwFromLeft ? -200 : screenWidth + 200;
+                const startY = screenHeight * 0.3 + (Math.random() * screenHeight * 0.4); 
+                const targetX = (screenWidth * 0.35) + (Math.random() * screenWidth * 0.3);
+                const ground = screenHeight - randomSize; 
+                
+                const gravity = 0.8; 
+                const vy = -(Math.random() * 15 + 20); 
+                const a = 0.5 * gravity; 
+                const b = vy; 
+                const c = startY - ground;
+                
+                const timeInAir = (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a); 
+                const calculatedVx = (targetX - startX) / timeInAir;
+
+                activeFlowers.push({ 
+                    el: flower, 
+                    x: startX, 
+                    y: startY, 
+                    vx: calculatedVx, 
+                    vy: vy, 
+                    rot: Math.random() * 360, 
+                    vRot: (Math.random() - 0.5) * 30, 
+                    scale: 2.0, 
+                    size: randomSize, 
+                    radius: randomSize * 0.4, 
+                    dead: false 
+                });
+            }
+
+            function animateFlowers() {
+                const gravity = 0.8;
+                
+                if (isSuctionActive) {
+                    const cowRect = cowMover.getBoundingClientRect(); 
+                    const targetX = cowRect.left + (cowRect.width / 2) - 50; 
+                    const targetY = cowRect.top + (cowRect.height / 2) + 50;
+
+                    activeFlowers.forEach((f) => {
+                        let cx = f.x + (f.size / 2); 
+                        let cy = f.y + (f.size / 2);
+                        let dx = targetX - cx; 
+                        let dy = targetY - cy; 
+                        let dist = Math.sqrt(dx * dx + dy * dy);
+                        
+                        f.vx += (dx / dist) * 2.5; 
+                        f.vy += (dy / dist) * 2.5;
+                        f.x += f.vx; 
+                        f.y += f.vy; 
+                        f.rot += f.vRot * 2; 
+                        f.scale -= 0.04; 
+                        
+                        if (dist < 15 || f.scale <= 0) { 
+                            f.el.remove(); 
+                            f.dead = true; 
+                        }
+                    });
+                    
+                    activeFlowers = activeFlowers.filter(f => !f.dead);
+                    
+                    if (activeFlowers.length === 0) { 
+                        isSuctionActive = false; 
+                        triggerCruiseMode(); 
+                    }
+                } else {
+                    // 1. Gravity and Floor Boundaries
+                    activeFlowers.forEach(f => {
+                        f.vy += gravity; 
+                        f.x += f.vx; 
+                        f.y += f.vy; 
+                        f.rot += f.vRot; 
+                        
+                        if (f.scale > 1) { 
+                            f.scale -= 0.02; 
+                        }
+                        
+                        if (f.x <= 0 && f.vx < 0) { 
+                            f.vx *= -0.6; 
+                            f.x = 0; 
+                        } else if (f.x >= screenWidth - f.size && f.vx > 0) { 
+                            f.vx *= -0.6; 
+                            f.x = screenWidth - f.size; 
+                        }
+                        
+                        const floorY = screenHeight - f.size + (f.size * 0.1); 
+                        
+                        if (f.y >= floorY) { 
+                            f.y = floorY; 
+                            f.vy *= -0.4; 
+                            f.vx *= 0.5; 
+                            f.vRot *= 0.5; 
+                        }
+                    });
+
+                    // 2. Collision Physics (Pushes flowers apart so they don't overlap)
+                    for (let iter = 0; iter < 2; iter++) {
+                        for (let i = 0; i < activeFlowers.length; i++) {
+                            for (let j = i + 1; j < activeFlowers.length; j++) {
+                                let f1 = activeFlowers[i]; 
+                                let f2 = activeFlowers[j];
+                                
+                                let dx = (f2.x + f2.size/2) - (f1.x + f1.size/2); 
+                                let dy = (f2.y + f2.size/2) - (f1.y + f1.size/2);
+                                let dist = Math.sqrt(dx * dx + dy * dy); 
+                                let minDist = f1.radius + f2.radius; 
+                                
+                                if (dist < minDist && dist > 0) {
+                                    let nx = dx / dist; 
+                                    let ny = dy / dist; 
+                                    let overlap = minDist - dist;
+                                    
+                                    f1.x -= nx * overlap * 0.5; 
+                                    f1.y -= ny * overlap * 0.5; 
+                                    f2.x += nx * overlap * 0.5; 
+                                    f2.y += ny * overlap * 0.5;
+                                    
+                                    let velAlongNormal = (f2.vx - f1.vx) * nx + (f2.vy - f1.vy) * ny;
+                                    
+                                    if (velAlongNormal < 0) { 
+                                        let impulse = -(1 + 0.15) * velAlongNormal / 2; 
+                                        f1.vx -= impulse * nx; 
+                                        f1.vy -= impulse * ny; 
+                                        f2.vx += impulse * nx; 
+                                        f2.vy += impulse * ny; 
+                                    }
+                                    
+                                    f1.vRot *= 0.85; 
+                                    f2.vRot *= 0.85; 
+                                    f1.vx *= 0.9; 
+                                    f2.vx *= 0.9;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // 3. Draw updates to screen
+                activeFlowers.forEach(f => {
+                    if (!isSuctionActive) { 
+                        const floorY = screenHeight - f.size + (f.size * 0.1); 
+                        if (f.y > floorY) { 
+                            f.y = floorY; 
+                        } 
+                    }
+                    f.el.style.transform = `translate(${f.x}px, ${f.y}px) rotate(${f.rot}deg) scale(${Math.max(0, f.scale)})`;
+                });
+                
+                requestAnimationFrame(animateFlowers);
+            }
+            animateFlowers();
+
+            function handleMoreFlowers() {
+                throwFlower(); 
+                clickCount++; 
+                let fillPercentage = Math.min((clickCount / maxClicks) * 100, 100); 
+                progressFill.style.width = `${fillPercentage}%`;
+                
+                if (fillPercentage >= 100 && !btnLetsGo.dataset.triggered) { 
+                    btnLetsGo.dataset.triggered = "true"; 
+                    progressText.style.display = 'block'; 
+                    setTimeout(() => { 
+                        progressText.style.display = 'none'; 
+                        btnLetsGo.style.display = 'block'; 
+                    }, 2000);
+                }
+            }
+
+            function startFlowerSpam() {
+                if(btnNo) btnNo.style.display = 'none'; 
+                btnYes.innerText = 'More'; 
+                btnClear.style.display = 'block'; 
+                progressWrapper.style.display = 'flex'; 
+                flowerText.innerText = "Here you go!"; 
+                
+                handleMoreFlowers(); 
+                btnYes.onclick = handleMoreFlowers;
+            }
+            
+            btnYes.onclick = startFlowerSpam;
+            
+            if(btnNo) { 
+                btnNo.onclick = () => { 
+                    flowerText.innerText = "I don't care, I will still gift you 😤"; 
+                    setTimeout(startFlowerSpam, 2000); 
+                }; 
+            }
+            
+            // --- Clear Button Logic ---
+            btnClear.onclick = () => {
+                // 1. Remove all flower image elements from the HTML
+                activeFlowers.forEach(f => f.el.remove());
+                
+                // 2. Empty the physics tracking array
+                activeFlowers = [];
+                
+                // 3. Reset the progress bar and click count
+                clickCount = 0;
+                progressFill.style.width = '0%';
+                
+                // 4. Hide the "Let's Go" button and reset its trigger state
+                btnLetsGo.style.display = 'none';
+                delete btnLetsGo.dataset.triggered;
+                progressText.style.display = 'none';
+                
+                // 5. Update the text to be playful
+                flowerText.innerText = "Poof! All gone. Want more?";
+            };
+
+            btnLetsGo.onclick = () => {
+                const playerContainer = document.getElementById('music-player-container');
+                const bgm = document.getElementById('bg-music');
+                
+                playerContainer.style.display = 'flex'; 
+                bgm.volume = 0.5; 
+                bgm.play().catch(e => console.log("Audio blocked:", e));
+                
+                setTimeout(() => { 
+                    playerContainer.classList.add('collapsed'); 
+                }, 5000);
+                
+                playerContainer.onclick = (e) => { 
+                    if (e.target.tagName.toLowerCase() === 'audio') return; 
+                    playerContainer.classList.toggle('collapsed'); 
+                };
+
+                btnYes.disabled = true; 
+                btnLetsGo.disabled = true; 
+                btnClear.disabled = true;
+                promptContainer.style.opacity = '0'; 
+                progressWrapper.style.opacity = '0'; 
+                btnClear.style.opacity = '0';
+                
+                setTimeout(() => { 
+                    promptContainer.style.display = 'none'; 
+                    progressWrapper.style.display = 'none'; 
+                    btnClear.style.display = 'none'; 
+                }, 1000);
+                
+                isCowBouncing = false; 
+                cowMover.style.zIndex = "60"; 
+                cowMover.style.transition = 'transform 2s cubic-bezier(0.25, 1, 0.5, 1)';
+                
+                const centerX = (screenWidth / 2) - 62.5; 
+                const centerY = (screenHeight / 2) - 62.5;
+                cowMover.style.transform = `translate(${centerX}px, ${centerY}px) scale(4) rotate(0deg)`;
+                
+                setTimeout(() => { 
+                    isSuctionActive = true; 
+                    activeFlowers.forEach(f => { 
+                        f.vy -= (Math.random() * 10 + 5); 
+                    }); 
+                }, 2000);
+            };
+
+            const myMemories = [
+                'pics/photo (1).jpg', 'pics/photo (2).jpg', 'pics/photo (3).jpg',
+                'pics/photo (4).jpg', 'pics/photo (5).jpg', 'pics/photo (6).jpg',
+                'pics/photo (7).jpg', 'pics/photo (8).jpg', 'pics/photo (9).jpg',
+                'pics/photo (10).jpg', 'pics/photo (11).jpg', 'pics/photo (12).jpg',
+                'pics/photo (13).jpg', 'pics/photo (14).jpg', 'pics/photo (15).jpg',
+                'pics/photo (16).jpg', 'pics/photo (17).jpg', 'pics/photo (18).jpg',
+                'pics/photo (19).jpg', 'pics/photo (20).jpg'
+            ];
+            
+            let currentImageIndex = 0; 
+            let hintTimeout;
+
+            function triggerCruiseMode() {
+                const mainTitle = document.getElementById('main-title'); 
+                const moon = document.querySelector('.moon');
+                cowMover.style.transition = 'transform 2.5s ease-in';
+                
+                const centerX = (screenWidth / 2) - 62.5; 
+                const centerY = (screenHeight / 2) - 62.5;
+                cowMover.style.transform = `translate(${centerX}px, ${centerY}px) scale(6) rotate(0deg)`;
+
+                mainTitle.style.transition = 'top 1.5s ease-in, opacity 1s'; 
+                mainTitle.style.top = '100%'; 
+                mainTitle.style.opacity = '0';
+                moon.style.transition = 'top 2s ease-in'; 
+                moon.style.top = '150%';
+
+                window.warpInterval = setInterval(() => { 
+                    if (baseStarSpeed < 75) baseStarSpeed += 1.5; 
+                }, 50);
+
+                setTimeout(() => {
+                    document.getElementById('cow-bobber').classList.add('is-bobbing');
+                    document.getElementById('cat').style.animation = "popCat 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards";
+                    document.getElementById('dog').style.animation = "popDog 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.5s";
+
+                    mainStars.length = Math.min(mainStars.length, 50); 
+                    mainStars.forEach(s => s.opacity = Math.min(s.opacity, 0.25)); 
+
+                    setTimeout(() => {
+                        cowMover.style.transition = 'transform 3.5s cubic-bezier(0.25, 1, 0.5, 1)';
+                        const watchX = screenWidth * 0.75; 
+                        const watchY = screenHeight * 0.65; 
+                        cowMover.style.transform = `translate(${watchX}px, ${watchY}px) scale(3) rotate(-5deg)`;
+                        loadAndShowMemory(currentImageIndex);
+                    }, 3000); 
+                }, 2500); 
+            }
+
+            function loadAndShowMemory(index) {
+                if (index >= myMemories.length) { 
+                    startGrandFinale(); 
+                    return; 
+                }
+                
+                const imgUrl = myMemories[index]; 
+                const tempImg = new Image(); 
+                tempImg.src = imgUrl;
+                
+                tempImg.onload = () => {
+                    let maxW = screenWidth * 0.75; 
+                    let maxH = screenHeight * 0.65;
+                    let ratio = Math.min(maxW / tempImg.width, maxH / tempImg.height);
+                    playConstellation(tempImg.width * ratio, tempImg.height * ratio, imgUrl);
+                };
+            }
+
+            function playConstellation(imgW, imgH, imgSrc) {
+                const layer = document.getElementById('constellation-layer'); 
+                layer.innerHTML = ''; 
+                
+                const cx = screenWidth / 2; 
+                const cy = screenHeight / 2;
+                const imgLeft = cx - (imgW / 2); 
+                const imgTop = cy - (imgH / 2);
+
+                const brightStars = [];
+                for (let i = 0; i < 35; i++) { 
+                    let s = document.createElement('div'); 
+                    s.className = 'constellation-star';
+                    
+                    let startX = Math.random() * screenWidth; 
+                    let startY = Math.random() > 0.5 ? -50 : screenHeight + 50;
+                    
+                    if (Math.random() > 0.5) { 
+                        startX = Math.random() > 0.5 ? -50 : screenWidth + 50; 
+                        startY = Math.random() * screenHeight; 
+                    }
+                    
+                    s.style.left = startX + 'px'; 
+                    s.style.top = startY + 'px';
+                    layer.appendChild(s); 
+                    brightStars.push(s);
+                }
+
+                setTimeout(() => {
+                    brightStars.forEach(s => {
+                        s.style.opacity = '1'; 
+                        s.style.left = (imgLeft + (Math.random() * imgW)) + 'px'; 
+                        s.style.top = (imgTop + (Math.random() * imgH)) + 'px';
+                    });
+                }, 100);
+
+                setTimeout(() => {
+                    const imgContainer = document.getElementById('image-container'); 
+                    const memoryImg = document.getElementById('memory-img');
+                    
+                    memoryImg.src = imgSrc; 
+                    imgContainer.style.opacity = '1'; 
+                    imgContainer.style.transform = 'translate(-50%, -50%) scale(1)'; 
+                    imgContainer.style.pointerEvents = 'auto'; 
+                    
+                    brightStars.forEach(s => { 
+                        s.style.opacity = '0'; 
+                        s.style.transform = 'scale(0)'; 
+                    });
+                    
+                    hintTimeout = setTimeout(() => { 
+                        document.getElementById('click-hint').style.opacity = '1'; 
+                    }, 10000);
+                }, 2700); 
+            }
+
+            const myPlanets = ['asset/planet1.png', 'asset/planet2.png', 'asset/planet3.png', 'asset/planet4.png', 'asset/planet5.png'];
+            const existingPlanets = [];
+
+            document.getElementById('memory-img').onclick = function() {
+                clearTimeout(hintTimeout); 
+                document.getElementById('click-hint').style.opacity = '0'; 
+                
+                const imgContainer = document.getElementById('image-container');
+                imgContainer.style.opacity = '0'; 
+                imgContainer.style.pointerEvents = 'none'; 
+
+                const star = document.createElement('img'); 
+                star.src = 'asset/golden_star.png'; 
+                star.className = 'golden-star';
+                star.style.filter = 'brightness(0.5) sepia(1) saturate(10) hue-rotate(5deg) brightness(2.5) drop-shadow(0 0 20px gold)';
+                document.body.appendChild(star);
+
+                const startX = screenWidth / 2 - 50; 
+                const startY = screenHeight / 2 - 50;
+                const cowRect = document.getElementById('cow-mover').getBoundingClientRect();
+                const targetX = cowRect.left + (cowRect.width / 2) - 50; 
+                const targetY = cowRect.top + (cowRect.height / 2) - 50;
+
+                const cp1X = startX + (Math.random() * 800 - 400); 
+                const cp1Y = startY - (Math.random() * 600 + 200); 
+                const cp2X = targetX + (Math.random() * 800 - 400); 
+                const cp2Y = targetY + (Math.random() * 600 + 200);
+
+                let t = 0; 
+                function animateStar() {
+                    t += 0.005; 
+                    if (t >= 1) { 
+                        star.remove(); 
+                        spawnPlanetAndNextImage(); 
+                        return; 
+                    }
+                    
+                    const currentX = Math.pow(1 - t, 3) * startX + 3 * Math.pow(1 - t, 2) * t * cp1X + 3 * (1 - t) * Math.pow(t, 2) * cp2X + Math.pow(t, 3) * targetX;
+                    const currentY = Math.pow(1 - t, 3) * startY + 3 * Math.pow(1 - t, 2) * t * cp1Y + 3 * (1 - t) * Math.pow(t, 2) * cp2Y + Math.pow(t, 3) * targetY;
+                    
+                    star.style.left = currentX + 'px'; 
+                    star.style.top = currentY + 'px'; 
+                    star.style.transform = `rotate(${t * 1080}deg)`; 
+                    requestAnimationFrame(animateStar);
+                }
+                animateStar(); 
+            };
+
+            function spawnPlanetAndNextImage() {
+                const planetLayer = document.getElementById('planet-layer'); 
+                const planet = document.createElement('img');
+                planet.src = myPlanets[Math.floor(Math.random() * myPlanets.length)]; 
+                planet.className = 'planet';
+                
+                let size, planetX, planetY; 
+                let isValidPosition = false; 
+                let attempts = 0; 
+                const padding = 30; 
+                
+                while (!isValidPosition && attempts < 50) {
+                    size = 250 + Math.random() * 450; 
+                    planetX = (Math.random() * screenWidth) - (size / 3); 
+                    planetY = (Math.random() * screenHeight) - (size / 3);
+                    const newRadius = size / 2; 
+                    const newCenterX = planetX + newRadius; 
+                    const newCenterY = planetY + newRadius;
+                    
+                    isValidPosition = true; 
+                    for (let i = 0; i < existingPlanets.length; i++) {
+                        const p = existingPlanets[i]; 
+                        const dx = newCenterX - p.centerX; 
+                        const dy = newCenterY - p.centerY;
+                        if (Math.sqrt(dx * dx + dy * dy) < (newRadius + p.radius + padding)) { 
+                            isValidPosition = false; 
+                            break; 
+                        }
+                    }
+                    attempts++;
+                }
+
+                existingPlanets.push({ centerX: planetX + (size / 2), centerY: planetY + (size / 2), radius: size / 2 });
+                planet.style.width = size + 'px'; 
+                planet.style.left = planetX + 'px'; 
+                planet.style.top = planetY + 'px';
+                planet.style.setProperty('--target-opacity', 0.7 + Math.random() * 0.3);
+                planet.style.filter = `brightness(0.5) sepia(1) saturate(5) hue-rotate(${Math.floor(Math.random() * 360)}deg) brightness(2)`;
+                planetLayer.appendChild(planet);
+
+                setTimeout(() => { 
+                    currentImageIndex++; 
+                    loadAndShowMemory(currentImageIndex); 
+                }, 2500); 
+            }
+
+            function startGrandFinale() {
+                const cowMover = document.getElementById('cow-mover'); 
+                const cowImg = document.getElementById('cow-img');
+                const catImg = document.getElementById('cat'); 
+                const dogImg = document.getElementById('dog');
+                const centerX = (screenWidth / 2) - 62.5; 
+                const centerY = (screenHeight / 2) - 62.5;
+
+                cowMover.style.transition = 'transform 2s cubic-bezier(0.25, 1, 0.5, 1)';
+                cowMover.style.transform = `translate(${centerX}px, ${centerY}px) scale(6) rotate(0deg)`;
+
+                setTimeout(() => {
+                    cowImg.src = 'asset/cow_smile.png'; 
+                    catImg.src = 'asset/cat_smile.png'; 
+                    dogImg.src = 'asset/dog_smile.png';
+                    
+                    setTimeout(() => {
+                        cowMover.style.transition = 'transform 1.5s ease-in';
+                        cowMover.style.transform = `translate(${centerX}px, -1000px) scale(6) rotate(0deg)`; 
+                        clearInterval(window.warpInterval);
+                        
+                        let slowDownInterval = setInterval(() => {
+                            if (baseStarSpeed > 0.5) {
+                                baseStarSpeed -= 1.5; 
+                            } else { 
+                                baseStarSpeed = 0.5; 
+                                clearInterval(slowDownInterval); 
+                            }
+                        }, 50);
+                    }, 1500);
+                }, 2000);
+
+                setTimeout(() => {
+                    document.getElementById('milky-way').style.opacity = '0.6';
+                    document.querySelectorAll('.planet').forEach(p => {
+                        p.style.transition = "filter 2s ease, transform 2s ease";
+                        p.style.filter += " drop-shadow(0 0 50px #ffffff) drop-shadow(0 0 100px #ffffff) brightness(3)";
+                        p.style.transform = "scale(1.1)"; 
+                    });
+
+                    cowMover.style.transition = 'none'; 
+                    cowMover.style.transform = `translate(${screenWidth + 500}px, ${centerY - 150}px) scale(7) rotate(-15deg)`; 
+                    
+                    setTimeout(() => {
+                        cowMover.style.transition = 'transform 2.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; 
+                        cowMover.style.transform = `translate(${centerX}px, ${centerY - 20}px) scale(6) rotate(0deg)`; 
+                        
+                        setTimeout(() => {
+                            cowMover.style.transition = 'transform 2.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; 
+                            cowMover.style.transform = `translate(${centerX}px, ${centerY + 50}px) scale(6) rotate(0deg)`; 
+                            
+                            startTimer();
+                            
+                            const universeMsg = document.getElementById('universe-message');
+                            if(universeMsg) universeMsg.style.opacity = '1';
+                            
+                            const tooltip = document.getElementById('custom-tooltip');
+                            cowImg.style.zIndex = '10'; 
+                            catImg.style.zIndex = '100'; 
+                            dogImg.style.zIndex = '100';
+
+                            function setupHover(element, name) {
+                                element.title = ""; 
+                                element.style.cursor = 'pointer'; 
+                                element.style.pointerEvents = 'auto'; 
+                                
+                                element.onmouseenter = () => { 
+                                    tooltip.innerText = name; 
+                                    tooltip.style.opacity = '1'; 
+                                };
+                                element.onmousemove = (e) => { 
+                                    tooltip.style.left = e.clientX + 'px'; 
+                                    tooltip.style.top = e.clientY + 'px'; 
+                                };
+                                element.onmouseleave = () => { 
+                                    tooltip.style.opacity = '0'; 
+                                };
+                            }
+
+                            setupHover(cowImg, "牛牛"); 
+                            setupHover(catImg, "喵喵"); 
+                            setupHover(dogImg, "狗狗");
+                        }, 100);
+                    }, 100);
+                }, 5000); 
+            }
+
+            function startTimer() {
+                const container = document.getElementById('timer-container'); 
+                const clock = document.getElementById('timer-clock');
+                
+                container.style.display = 'block'; 
+                const startDate = new Date('2024-01-15T00:00:00').getTime();
+                
+                setInterval(() => {
+                    const distance = new Date().getTime() - startDate;
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                    
+                    clock.innerText = `${days} Days ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>
